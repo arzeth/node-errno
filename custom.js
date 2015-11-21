@@ -1,5 +1,7 @@
 var prr = require('prr')
 
+var isStrictMode = (function () { return !this; } )()
+
 function init (type, message, cause) {
   prr(this, {
       type    : type
@@ -15,7 +17,7 @@ function init (type, message, cause) {
 function CustomError (message, cause) {
   Error.call(this)
   if (Error.captureStackTrace)
-    Error.captureStackTrace(this, arguments.callee)
+    Error.captureStackTrace(this, isStrictMode ? undefined : arguments.callee)
   init.call(this, 'CustomError', message, cause)
 }
 
@@ -37,7 +39,7 @@ function createError (errno, type, proto) {
     }
     Error.call(this)
     if (Error.captureStackTrace)
-      Error.captureStackTrace(this, arguments.callee)
+      Error.captureStackTrace(this, isStrictMode ? undefined : arguments.callee)
   }
   err.prototype = !!proto ? new proto() : new CustomError()
   return err
